@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+name: Build audited wallet-safe GitHub Pages
 on:
   push:
     branches: [main]
@@ -18,9 +18,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --prefix frontend --no-audit --no-fund
+      - run: npm run build --prefix frontend
+      - name: Enforce read-only build until new verified contract
+        run: |
+          ! grep -R -E 'https://esm.sh|eth_requestAccounts' site-dist/index.html
+          test -f site-dist/index.html
+          test -f site-dist/assets/$(find site-dist/assets -maxdepth 1 -name '*.js' -printf '%f\n' | head -1)
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: site-dist
       - id: deployment
         uses: actions/deploy-pages@v4
