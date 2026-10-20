@@ -1,9 +1,17 @@
 {
-  "name": "crosssource-desk",
+  "name": "crosssource-desk-verified",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
-    "dev": "python3 -m http.server 4173 --directory ."
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "genlayer-js": "1.1.8"
+  },
+  "devDependencies": {
+    "vite": "7.1.12"
   }
 }

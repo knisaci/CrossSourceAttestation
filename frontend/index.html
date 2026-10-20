@@ -1,24 +1,16 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CrossSource Desk — dual-source attestation on GenLayer</title>
-    <meta name="description" content="Lock a natural-language standard and two live https pages. GenLayer validators fetch both sources and reach consensus on PASS, FAIL, or INSUFFICIENT." />
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./src/styles.css" />
-    <script type="importmap">
-      {
-        "imports": {
-          "genlayer-js": "https://esm.sh/genlayer-js@2.0.0-rc.1",
-          "genlayer-js/chains": "https://esm.sh/genlayer-js@2.0.0-rc.1/chains",
-          "genlayer-js/types": "https://esm.sh/genlayer-js@2.0.0-rc.1/types"
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="./src/main.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'none'; frame-ancestors 'none'; script-src 'self'; connect-src 'self' https://rpc-bradbury.genlayer.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; upgrade-insecure-requests" />
+  <meta name="referrer" content="no-referrer" />
+  <title>CrossSource Desk — GenLayer evidence attestation</title>
+  <meta name="description" content="Read on-chain CrossSource evidence verdicts. Wallet transactions remain disabled pending a verified security-remediated deployment." />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./src/main.js"></script>
+</body>
 </html>
