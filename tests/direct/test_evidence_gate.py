@@ -21,6 +21,8 @@ def test_pass_with_two_verbatim_quotes(direct_vm, direct_deploy):
     }))
     c, i = setup(direct_vm, direct_deploy, a, b)
     actual = c.resolve(i)
+    print("DIRECT_RESOLVE_CLAIM", read(c, i), flush=True)
+    print("DIRECT_VM_TRACE", direct_vm._traces[-12:], flush=True)
     assert actual == "PASS", read(c, i)
     assert read(c, i)["status"] == "RESOLVED"
 
