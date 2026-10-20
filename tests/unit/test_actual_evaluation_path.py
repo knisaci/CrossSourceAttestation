@@ -29,12 +29,11 @@ def load_contract(monkeypatch):
         def exec_prompt(self, prompt, response_format=None):
             return self.judge(prompt, response_format)
     class VM:
-        pass
-    VM.Return = Return
         validator = None
         def run_nondet_unsafe(self, leader_fn, validator_fn):
             self.validator = validator_fn
             return leader_fn()
+    VM.Return = Return
     class Public:
         write = staticmethod(lambda f: f)
         view = staticmethod(lambda f: f)
