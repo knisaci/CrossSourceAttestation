@@ -1,22 +1,33 @@
-"""Direct Mode compatibility adapter for the pinned GenVM SDK.
+"""Diagnostic wrapper for current upstream Direct Mode bootstrap failure.
 
-Some SDK builds read their initialization message from fd 0 more than once:
-the runner injects an encoded message, an eager import consumes it, and the
-contract module import then sees EOF. Rewind the injected *test-only* buffer
-before loading the module. Do not change production code or verdict logic.
+Important: this runs only inside pytest Direct Mode, never inside on-chain code.
 """
 import os
 import pytest
 
 
 @pytest.fixture(autouse=True)
-def rewind_injected_message_before_import(monkeypatch):
+def diagnose_injected_message(monkeypatch):
     from gltest.direct import loader
-    original = loader._load_module
-    def load_with_rewind(path):
+    original_inject = loader._inject_message_to_fd0
+
+    def checked_inject(vm):
+        import sys
+        print("GLTEST bootstrap before injection:", [
+            name for name in ("genlayer", "genlayer.gl", "genlayer._internal.msg", "genlayer.message")
+            if name in sys.modules
+        ], flush=True)
+        original_inject(vm)
         try:
+            fd_stat = os.fstat(0)
+            pos = os.lseek(0, 0, os.SEEK_CUR)
+            prefix = os.read(0, 16)
+            print("GLTEST bootstrap after injection: size=%d pos=%d prefix=%r" %
+                  (fd_stat.st_size, pos, prefix), flush=True)
             os.lseek(0, 0, os.SEEK_SET)
-        except OSError:
-            pass
-        return original(path)
-    monkeypatch.setattr(loader, "_load_module", load_with_rewind)
+            if not prefix:
+                raise RuntimeError("GenLayer Direct Mode injected empty fd0")
+        except OSError as e:
+            print("GLTEST bootstrap fd0 unavailable:", repr(e), flush=True)
+            raise
+    monkeypatch.setattr(loader, "_inject_message_to_fd0", checked_inject)
