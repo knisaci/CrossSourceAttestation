@@ -51,3 +51,16 @@ def legacy_genvm_direct_adapter(monkeypatch):
         return validator(vm_api.Return(calldata=value))
 
     monkeypatch.setattr(VMContext, "run_validator", run_old_validator)
+
+    # The legacy contract has storage descriptors generated at class creation;
+    # gltest's v0.3 allocator looks under genlayer.storage and falls back to
+    # Contract(), which lacks __type_desc__. Allocate via the v0.2 descriptor.
+    def allocate_legacy(contract_cls, vm, *args, **kwargs):
+        from genlayer.py.storage._internal.generate import _storage_build
+        descriptor = _storage_build(contract_cls, {})
+        slot = vm._storage.get_store_slot(bytes(32))
+        instance = descriptor.get(slot, 0)
+        instance.__init__(*args, **kwargs)
+        return instance
+
+    monkeypatch.setattr(loader, "_allocate_contract", allocate_legacy)
