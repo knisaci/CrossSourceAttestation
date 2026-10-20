@@ -22,6 +22,10 @@ def legacy_genvm_direct_adapter(monkeypatch):
     monkeypatch.setattr(sdk_compat, "import_calldata", old_calldata)
     monkeypatch.setattr(sdk_compat, "import_types", old_types)
     monkeypatch.setattr(loader, "import_calldata", old_calldata)
+    # wasi_mock imports the v0.3 loader function by value. Redirect it too,
+    # otherwise all WebRequest and ExecPrompt calls decode as failures.
+    from gltest.direct import wasi_mock
+    monkeypatch.setattr(wasi_mock, "import_calldata", old_calldata)
 
     def install_old_nondet_mock():
         from gltest.direct import wasi_mock
