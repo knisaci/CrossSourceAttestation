@@ -20,7 +20,8 @@ def test_pass_with_two_verbatim_quotes(direct_vm, direct_deploy):
         "verdict": "PASS", "reason": "Both supported", "evidence_a": a, "evidence_b": b,
     }))
     c, i = setup(direct_vm, direct_deploy, a, b)
-    assert c.resolve(i) == "PASS"
+    actual = c.resolve(i)
+    assert actual == "PASS", read(c, i)
     assert read(c, i)["status"] == "RESOLVED"
 
 def test_late_contradiction_after_12000_chars(direct_vm, direct_deploy):
