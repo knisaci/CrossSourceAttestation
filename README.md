@@ -1,3 +1,10 @@
+> **October 2026 security note:** The public GitHub Pages desk is read-only
+> while a corrected evidence-evaluation contract is being verified and deployed.
+> The legacy Bradbury address and transaction examples below refer to the
+> original implementation; they do **not** prove the remediation.
+> See [steward verification](docs/STEWARD-REMEDIATION.md) and
+> [Bradbury deployment](docs/BRADBURY-DEPLOYMENT.md).
+
 # CrossSource Desk
 
 A GenLayer project around the accepted **CrossSourceAttestation** Intelligent Contract.
