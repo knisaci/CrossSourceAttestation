@@ -1,0 +1,23 @@
+name: Frontend build and security checks
+on:
+  pull_request:
+  push:
+    branches: ["main", "fix/**"]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --prefix frontend --no-audit --no-fund
+      - run: npm run build --prefix frontend
+      - name: Verify locally served bundles
+        run: |
+          test -f site-dist/index.html
+          ! grep -E 'https://esm.sh|https://fonts.googleapis.com' site-dist/index.html
+          grep -q "script-src 'self'" site-dist/index.html
+          test "$(find site-dist/assets -maxdepth 1 -type f -name '*.js' | wc -l)" -ge 1
