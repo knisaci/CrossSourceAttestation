@@ -75,3 +75,15 @@ def test_validator_rejects_changed_verdict(direct_vm, direct_deploy):
         "evidence_a": "", "evidence_b": "",
     }))
     assert direct_vm.run_validator() is False
+
+def test_numeric_claim_id_from_real_cli_is_normalized(direct_vm, direct_deploy):
+    """Actual Bradbury CLI encodes --args '1' as int; contract must coerce it."""
+    a, b = "Approved safety evidence A.", "Approved safety evidence B."
+    direct_vm.mock_llm(r"UNTRUSTED_EVIDENCE_JSON_START", json.dumps({
+        "verdict": "PASS", "reason": "Both approved", "evidence_a": a, "evidence_b": b,
+    }))
+    contract, claim_id = setup(direct_vm, direct_deploy, a, b)
+    assert claim_id == "1"
+    assert json.loads(contract.get_claim(1))["status"] == "OPEN"
+    assert contract.resolve(1) == "PASS"
+    assert json.loads(contract.get_claim(1))["status"] == "RESOLVED"
