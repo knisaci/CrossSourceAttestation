@@ -100,3 +100,16 @@ The frontend is now pointed to the new Bradbury address for reads, with
 wallet actions still disabled. No claim has been made that the external
 wallet/extension phishing alert is cleared. Do not override such warnings
 or claim that source hardening eliminates every possible prompt-injection.
+
+### 21 October 2026 signed resolve incident
+
+The first signed `resolve("1")` against
+`0x59195008F33aa97AaF0bB73ECbd22187694AF559` **failed with
+`FINISHED_WITH_ERROR`**, despite `status_name: ACCEPTED`. Five validators
+voted DISAGREE. The actual trace shows numeric calldata `1` entered a
+`TreeMap[str, Claim]` comparison and raised a TypeError before any web
+fetch or LLM invocation. This is **not** evidence of completed resolution.
+The exact forensic trace and corrected candidate are recorded in
+[BRADBURY-RESOLVE-INCIDENT.md](BRADBURY-RESOLVE-INCIDENT.md).
+The fixed candidate requires a new deployment; do not claim the old
+address has been updated.
