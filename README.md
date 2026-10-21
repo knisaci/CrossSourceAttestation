@@ -3,8 +3,8 @@
 > [Deployment tx](https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8)
 > was ACCEPTED with five validator AGREE votes; deployed source SHA-256 is
 > `1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2`.
-> Live source/ABI/read verified, but a signed open/resolve cycle and third-party
-> wallet reputation clearance are still pending. Website wallet writes remain
+> Live Bradbury open_claim→resolve→get_claim verified with PASS
+> ([resolve tx](https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a)); third-party wallet warning remains unverified as cleared. Website wallet writes remain
 > disabled. See [verification](docs/STEWARD-REMEDIATION.md) and
 > [exact claim commands](docs/BRADBURY-DEPLOYMENT.md).
 
@@ -32,10 +32,10 @@ Milestones, listing rules, and agent deliverables are usually checked by a perso
 | Field | Value |
 | --- | --- |
 | Network | Testnet Bradbury |
-| Address | [`0x8bF0baAC9432a9c00183de43825E39F58b3E4a8c`](https://explorer-bradbury.genlayer.com/address/0x8bF0baAC9432a9c00183de43825E39F58b3E4a8c) |
-| Deploy | [`0x0fcaae6c…9a21`](https://explorer-bradbury.genlayer.com/tx/0x0fcaae6c78611df87a6914fd9fce952b45cca336c0db828769b284ff697a9a21) |
-| `open_claim` | [`0x7f46ff83…d934`](https://explorer-bradbury.genlayer.com/tx/0x7f46ff8380e262b167740385e511666d25f3eb366d43e76b5f0ed97f4951d934) |
-| `resolve` PASS | [`0x01e47a5b…7d49`](https://explorer-bradbury.genlayer.com/tx/0x01e47a5b666f42a36c0ffa86e5bd2602f0cc6230f6bfda705833382494f27d49) |
+| Address | [Current 0x59195008F33aa97AaF0bB73ECbd22187694AF559](https://explorer-bradbury.genlayer.com/address/0x59195008F33aa97AaF0bB73ECbd22187694AF559) |
+| Deploy | [0x8827fec6…922f8](https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8) |
+| `open_claim` | [Claim 1, 0xdbe32671…df683e](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e) |
+| `resolve` PASS | [Claim 1, 0x441c3d80…53795a](https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a) (4 AGREE, 1 TIMEOUT) |
 
 ### Calls
 
@@ -47,7 +47,7 @@ Source: [`contracts/CrossSourceAttestation.py`](contracts/CrossSourceAttestation
 
 ## App
 
-The desk is a static frontend. It talks to Bradbury through `genlayer-js`:
+The public GitHub Pages desk is currently **wallet-free, read-only**, using Bradbury RPC. The intended wallet write path uses `genlayer-js`, but remains disabled pending third-party wallet reputation clearance:
 
 - connect / switch the injected wallet to chain id `4221`
 - estimate fees when the SDK supports it
@@ -72,7 +72,7 @@ The desk is static. From the repo root:
 python3 -m http.server 4173 --directory docs
 ```
 
-Open http://localhost:4173, connect the wallet, load a demo preset, then Open claim → Resolve.
+Open http://localhost:4173 and click **Read claim** with ID `1` to view the resolved PASS. Wallet writes are disabled pending external wallet warning review.
 
 `frontend/` is the editable source; copy it into `docs/` after changes.
 
