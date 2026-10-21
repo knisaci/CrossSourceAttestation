@@ -19,7 +19,7 @@ jobs:
       - name: Verify locally served bundles
         run: |
           test -f site-dist/index.html
-          ! grep -iE 'importmap|src=|eth_requestAccounts|esm.sh' docs/index.html
+          ! grep -iE 'importmap|eth_requestAccounts|esm.sh' docs/index.html
           ! grep -E 'https://esm.sh|https://fonts.googleapis.com' site-dist/index.html
           grep -q "script-src 'self'" site-dist/index.html
           test "$(find site-dist/assets -maxdepth 1 -type f -name '*.js' | wc -l)" -ge 1

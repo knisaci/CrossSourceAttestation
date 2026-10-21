@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
 import {readClaimFromBradbury} from "../src/bradbury-read.js";
+import {readClaimFromBradbury as readLegacySiteClaim} from "../../docs/read-only.js";
 
 const ADDRESS = "0x59195008F33aa97AaF0bB73ECbd22187694AF559";
 const RPC = "https://rpc-bradbury.genlayer.com";
@@ -58,4 +59,8 @@ if (val.error === "unknown claim") {
 } else {
   throw new Error("Unexpected get_claim(1) result: " + raw);
 }
+const oldSiteRead=await readLegacySiteClaim("1",ADDRESS,RPC);
+if(JSON.stringify(JSON.parse(oldSiteRead))!==JSON.stringify(val))
+  throw new Error("Branch-Pages read-only viewer disagrees with bundled frontend");
+console.log("PASS: both static Pages publishers can read the same live claim");
 console.log("READ_ONLY_BRADBURY_VERIFICATION_SUCCESS");

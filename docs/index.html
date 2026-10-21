@@ -1,19 +1,15 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; object-src 'none'; form-action 'none'">
-<meta name="referrer" content="no-referrer">
-<title>CrossSource Desk — security maintenance</title>
-<style>body{font:17px/1.65 system-ui,sans-serif;background:#10151d;color:#edf1f5;max-width:680px;margin:9vh auto;padding:25px}h1{line-height:1.15}a{color:#9bbcff}article{border:1px solid #465266;border-radius:18px;padding:28px}small{color:#b1bed0}</style>
-</head>
-<body>
-<article>
-<h1>CrossSource Desk — read-only security maintenance</h1>
-<p>Wallet connection and transaction submission are disabled until the corrected GenLayer contract is deployed and verified. Never override a wallet or browser security warning to use this site.</p>
-<p>The verified contract source, native Direct Mode tests, and deployment evidence are published in the <a href="https://github.com/knisaci/CrossSourceAttestation">CrossSourceAttestation repository</a>.</p>
-<p><small>This is the no-script fallback for GitHub Pages branch publishing. The separately built Pages deployment provides the read-only claim viewer when active.</small></p>
-</article>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src https://rpc-bradbury.genlayer.com; base-uri 'none'; object-src 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer"><title>CrossSource Desk — read-only Bradbury verification</title>
+<style>body{font:16px/1.65 system-ui,sans-serif;background:#10151d;color:#edf1f5;max-width:780px;margin:8vh auto;padding:20px}article{border:1px solid #465266;border-radius:18px;padding:28px}a{color:#9bbcff}button,input{font:inherit;padding:10px;border-radius:8px}button{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#171e28;padding:14px;border-radius:10px;min-height:70px}small{color:#adb9ca}</style></head>
+<body><article><h1>CrossSource Desk</h1>
+<p>Verified contract on GenLayer Bradbury: <a href="https://explorer-bradbury.genlayer.com/address/0x59195008F33aa97AaF0bB73ECbd22187694AF559"><code>0x59195008F33aa97AaF0bB73ECbd22187694AF559</code></a></p>
+<p>This is a <strong>wallet-free, read-only</strong> claim viewer. Wallet signing remains disabled while security alerts are investigated. Do not override wallet/browser warnings.</p>
+<label for="claim-id">Claim ID</label>
+<input id="claim-id" placeholder="e.g. 1" inputmode="numeric">
+<button id="read-claim" type="button">Read claim</button>
+<pre id="claim-result" aria-live="polite">New deployment: no claims recorded until the first open_claim transaction.</pre>
+<p><small><a href="https://github.com/knisaci/CrossSourceAttestation/blob/main/docs/STEWARD-REMEDIATION.md">Contract source and independent verification</a></small></p></article>
+<script type="module" src="./read-only.js"></script>
+</body></html>
