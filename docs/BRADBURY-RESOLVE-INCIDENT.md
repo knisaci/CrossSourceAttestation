@@ -35,6 +35,40 @@ The currently deployed contract cannot be modified by pushing GitHub code.
 **Do not retry the same `resolve --args "1"` against that address.**
 Replaying will fail at the same deterministic entry-point bug.
 
+## Safe recovery of the EXISTING open claim (no redeployment)
+
+The official CLI automatically parses digit-only `--args` values as integers.
+The repository's `scripts/typed-cli-string-loader.mjs` provides a restricted
+Node 24 module hook for the official installed CLI: it turns the explicit
+`str#1` argument into the string `"1"` during CLI parsing. It modifies
+only the CLI source **in memory**, never the installed CLI files or account
+store. No key material is read by the hook.
+
+From the existing clone (on `main`, after pulling changes), first verify
+the claim using a **read-only** call:
+
+```sh
+node --import ./scripts/typed-cli-string-loader.mjs "$(command -v genlayer)" call 0x59195008F33aa97AaF0bB73ECbd22187694AF559 get_claim --rpc https://rpc-bradbury.genlayer.com --args str#1
+```
+
+Expected: JSON state for claim `1`, `status=OPEN`; no account signature
+or fee is required for this read.
+
+Only after that succeeds, run the **signed** resolution:
+
+```sh
+node --import ./scripts/typed-cli-string-loader.mjs "$(command -v genlayer)" write 0x59195008F33aa97AaF0bB73ECbd22187694AF559 resolve --rpc https://rpc-bradbury.genlayer.com --args str#1
+```
+
+Record the new transaction hash; don't trust a green CLI check alone. Confirm
+`txExecutionResultName=FINISHED_WITH_RETURN` and an on-chain
+`get_claim("1")` state of `RESOLVED` with a verdict. No warning bypasses,
+software patches to the installed CLI, or private-key handling are required.
+
+The typed-ID hook is a compatibility workaround. The underlying contract
+type issue is separately fixed in a candidate branch, with 16 regression
+checks, for any future deployment. It is NOT deployed yet.
+
 ## Corrected candidate
 
 At the public boundaries of both `resolve` and `get_claim`:
