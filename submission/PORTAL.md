@@ -1,75 +1,55 @@
-# GenLayer Portal — Project submission copy
+# CrossSource Desk — verified GenLayer Project resubmission (21 October 2026)
 
-Paste these fields into the Project Explorer application. Character limits are noted.
+**Submission:** `3c571226-e61c-46ca-bfa4-4704b69b171f`  
+**State:** updated proof prepared; not submitted in GenLayer Portal by GitHub.
 
-## 01 Identity
+## Project name and tags
+- Name: CrossSource Desk
+- Primary: Dispute Resolution
+- Focus: Evidence Assessment
 
-**Project name:** CrossSource Desk
+## One-liner (≤180 chars)
 
-**Primary tag:** Dispute Resolution
+Dual-source evidence gate on GenLayer: lock a standard and two live HTTPS pages, then reach consensus on PASS, FAIL or INSUFFICIENT.
 
-If that tag is missing, use **AI & Agents**. Secondary topics if offered: attestation, evidence, milestones.
+## Project description (≤1000 chars; 975 used)
 
-**Logo:** `submission/logo.svg` (export to PNG at 1024px if the form rejects SVG). Colors: charcoal `#0B0D10`, blue `#7AA2FF`, gold `#E8B86D`.
+CrossSource Desk is a GenLayer Intelligent Contract and public read-only evidence viewer on Testnet Bradbury. A caller locks a standard and two distinct HTTPS pages; resolve() fetches both and judges them under validator consensus, comparing PASS, FAIL or INSUFFICIENT rather than narrative text. Pages up to 32,768 characters are evaluated in full; oversized pages yield explicit INSUFFICIENT. Web content is untrusted evidence, never judge instructions. PASS requires verbatim quotations from both sources.
 
-## 02 One-liner (≤180)
+Live contract: 0x59195008F33aa97AaF0bB73ECbd22187694AF559. On-chain claim 1 completed open_claim → resolve → get_claim and stores RESOLVED/PASS (4 AGREE, 1 TIMEOUT). Source bytes match deployment; 8 Direct Mode and 8 additional regression tests pass.
 
-Dual-source evidence gate on GenLayer: lock a standard and two live https pages, then let validators agree only on PASS, FAIL, or INSUFFICIENT.
+For safety, the public site offers wallet-free claim reads. Signed writes were demonstrated via the GenLayer CLI; website wallet signing remains paused while a reported extension warning is independently reviewed.
 
-## 03 Overview (≤1000)
+## How-to (steward-friendly)
 
-CrossSource Desk is the project form of the accepted CrossSourceAttestation Intelligent Contract on Testnet Bradbury.
+**01. Open the website** — https://knisaci.github.io/CrossSourceAttestation/. It is intentionally wallet-free while the previously reported wallet/extension malicious-site warning is reviewed.
 
-A caller locks a natural-language standard plus two distinct public https pages. Anyone can later call resolve(). Every validator fetches both pages live, runs a structured JSON judge, and accepts the leader only when the verdict enum matches. Reasoning text may differ. Equivalence is the verdict field, not byte-identical prose.
+**02. Read proven claim** — Enter `1` and click **Read claim**. The live Bradbury `get_claim` should display `RESOLVED / PASS`, the reason, locked standard, opener and both source URLs.
 
-That is the trust problem: unstructured web pages cannot be compared with a hash, and a single-model “AI decided X” wrapper is not consensus. The contract is a reusable primitive for grant milestones, listing rules, and agent deliverables.
+**03. Check accepted writes** — Inspect on-chain [open_claim](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e) and [resolve](https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a) receipts, both `FINISHED_WITH_RETURN`. Resolve achieved 4 AGREE and 1 TIMEOUT, with verdict PASS.
 
-The public desk is a static app. It connects an injected wallet to Bradbury, submits open_claim and resolve, waits through validator consensus, then reads get_claim from accepted state. The frontend handles the full write lifecycle: fee estimate when available, signature, hash, explorer link, accepted/failed execution, and the resulting claim JSON.
+**04. Reproduce the evaluation** — Review [Direct Mode and contract-path test runner](https://github.com/knisaci/CrossSourceAttestation/actions) and `docs/STEWARD-REMEDIATION.md`: 8+8 regressions, including post-12k contradiction and prompt injection. The actual adjudication test uses synthetic public evidence.
 
-Already proven on-chain: open_claim 0x7f46ff83… and resolve PASS 0x01e47a5b… against example.org and iana.org/domains/reserved.
+**05. Signed replay** — See `docs/BRADBURY-DEPLOYMENT.md` for the installed GenLayer CLI and an explicit typed claim ID shim. A wallet is needed only on the operator's trusted local CLI; there is no public-site wallet signing while the warning remains unresolved.
 
-## 04 Demo video
+## Expected verification outcome (≤500 chars; 483 used)
 
-Optional. If you record one, film:
+Read claim 1 without a wallet at https://knisaci.github.io/CrossSourceAttestation/. Expect RESOLVED / PASS on 0x59195008F33aa97AaF0bB73ECbd22187694AF559. Accepted open: 0xdbe32671…df683e; accepted resolve: 0x441c3d80…53795a (FINISHED_WITH_RETURN; 4 AGREE, 1 TIMEOUT). Reproduce in README and docs/STEWARD-REMEDIATION.md: source SHA-256 1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2, 16 regression checks. Writes via CLI only while wallet warnings are investigated.
 
-1. Connect wallet / add Bradbury
-2. Load the reserved-domain preset
-3. Open claim, show explorer hash
-4. Resolve, wait for consensus
-5. Show PASS/FAIL/INSUFFICIENT plus reason
+## “What did you change?” (≤1000 chars; 813 used)
 
-Upload to YouTube or an X post and paste the direct URL.
+Fixed evidence truncation: pages ≤32,768 chars are fully evaluated; oversized pages yield explicit INSUFFICIENT. Isolated fetched content as untrusted JSON evidence, rejected direct judge-override instructions and unsupported PASS quotations. 8 GenLayer Direct Mode and 8 contract-path tests pass, including evidence after 12,000 chars and injection attempts. New Bradbury contract 0x59195008F33aa97AaF0bB73ECbd22187694AF559: byte-for-byte verified SHA-256 1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2. Claim 1 is RESOLVED/PASS after accepted open 0xdbe32671…df683e and resolve 0x441c3d80…53795a (4 AGREE, 1 TIMEOUT). Site now uses local bundles, restricted CSP, and wallet-free reads. Signing stays disabled pending external warning review. See GitHub docs/STEWARD-REMEDIATION.md and Actions.
 
-## 05 How-to
+## Links / unique supporting evidence
 
-**01 · Wallet**
-Install MetaMask (or another injected wallet). Add GenLayer Testnet Bradbury, chain id 4221, RPC https://rpc-bradbury.genlayer.com. Get testnet GEN from https://testnet-faucet.genlayer.foundation.
+- **Website:** https://knisaci.github.io/CrossSourceAttestation/
+- **GitHub:** https://github.com/knisaci/CrossSourceAttestation
+- **New deployed contract:** https://explorer-bradbury.genlayer.com/address/0x59195008F33aa97AaF0bB73ECbd22187694AF559
+- **Deployment:** https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8
+- **Successful open:** https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e
+- **Successful resolve:** https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a
+- **Steward remediation evidence:** https://github.com/knisaci/CrossSourceAttestation/blob/main/docs/STEWARD-REMEDIATION.md
+- **Failure trace and recovery:** https://github.com/knisaci/CrossSourceAttestation/blob/main/docs/BRADBURY-RESOLVE-INCIDENT.md
+- **Companion project repo:** https://github.com/knisaci/CrossSourceDesk
 
-**02 · Open the desk**
-Go to https://knisaci.github.io/CrossSourceAttestation/ and click Connect wallet. The app will request the Bradbury chain.
-
-**03 · Open a claim**
-Use the “reserved domains (likely PASS)” preset, or write your own standard and two https URLs. Click Open claim. Sign. Wait until the UI shows an opened claim id.
-
-**04 · Resolve**
-The claim id is filled in after a successful open. Click Resolve. Sign again. Validators now fetch both pages. This can take several minutes.
-
-**05 · Read the verdict**
-When consensus accepts the write, the desk calls get_claim and shows status, verdict, reason, opener, and both locked URLs. You can also paste any existing id (start with `1`) and click Read claim.
-
-## 06 Expected verification outcome (≤500, private)
-
-Steward path: open the GitHub Pages desk → connect a Bradbury wallet with GEN → load the reserved-domain preset (example.org + iana.org/domains/reserved) → Open claim → wait until get_claim shows status OPEN and a numeric id → Resolve → wait until status is RESOLVED and verdict is PASS, FAIL, or INSUFFICIENT. For a faster replay without a new write, Read claim `1` on contract 0x8bF0baAC9432a9c00183de43825E39F58b3E4a8c; that id was resolved PASS in tx 0x01e47a5b666f42a36c0ffa86e5bd2602f0cc6230f6bfda705833382494f27d49. Failure modes to expect: resolve on an already-RESOLVED id reverts; non-https URLs revert; identical URLs revert.
-
-## 07 Links
-
-**Website (required):** https://knisaci.github.io/CrossSourceAttestation/
-
-**GitHub:** https://github.com/knisaci/CrossSourceAttestation
-
-**Contract link 1:** https://explorer-bradbury.genlayer.com/address/0x8bF0baAC9432a9c00183de43825E39F58b3E4a8c
-
-Optional extra evidence:
-
-- https://explorer-bradbury.genlayer.com/tx/0x01e47a5b666f42a36c0ffa86e5bd2602f0cc6230f6bfda705833382494f27d49
-- https://explorer-bradbury.genlayer.com/tx/0x7f46ff8380e262b167740385e511666d25f3eb366d43e76b5f0ed97f4951d934
+**Transparency:** No claim is made that the external wallet/extension threat-provider warning was cleared; no signed adversarial real-network transactions are shown. The public app currently supports read-only claim verification. Only resubmit if the steward accepts that reduced, safer site behavior or after independent reputation clearance and controlled wallet-feature re-enablement.
