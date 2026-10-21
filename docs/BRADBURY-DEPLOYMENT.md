@@ -9,11 +9,11 @@
 - **Receipt shown by GenLayer CLI:** `status_name: ACCEPTED`, `resultName: AGREE`, `txExecutionResultName: FINISHED_WITH_RETURN`, five validators voted `AGREE`.
 - **Deployed code SHA-256:** `1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2`
 - **Verified source length:** 8,536 bytes, exact byte-for-byte match between deployed contract and `contracts/CrossSourceAttestation.py`.
-- **RPC checks:** `gen_getContractCode`, `gen_getContractSchema`, and `gen_call` read on `get_claim("1")` passed against live Bradbury. The fresh contract returned `{"error":"unknown claim"}`: no claim had been opened at the time of the check.
+- **RPC checks:** `gen_getContractCode`, `gen_getContractSchema`, and `gen_call` read on `get_claim("1")` passed against live Bradbury. The fresh contract returned `{"error":"unknown claim"}` at deployment verification time, before the first claim.
 
 Verification: GitHub Actions workflow **Verify Bradbury deployed source and read path** runs without any wallet or private key. Its read check is the exact same helper used by the read-only website.
 
-## Signed end-to-end proof — next action
+## Signed open_claim accepted — next: resolve claim 1
 
 Use the same installed GenLayer CLI and funded Bradbury testnet account already used for deployment. **No installation is required.** Only copy the commands below into the Terminal, not labels or earlier terminal output.
 
@@ -25,13 +25,21 @@ genlayer call 0x59195008F33aa97AaF0bB73ECbd22187694AF559 get_claim --rpc https:/
 
 Until a claim exists, this should say `unknown claim`.
 
-### Create synthetic claim 1 (signed write)
+### Signed open_claim transaction — completed
 
 ```sh
 genlayer write 0x59195008F33aa97AaF0bB73ECbd22187694AF559 open_claim --rpc https://rpc-bradbury.genlayer.com --args "Both sources explicitly confirm that milestone CS-DEMO-01 is APPROVED." "https://raw.githubusercontent.com/knisaci/CrossSourceAttestation/main/evidence/demo/approved-a.txt" "https://raw.githubusercontent.com/knisaci/CrossSourceAttestation/main/evidence/demo/approved-b.txt"
 ```
 
-Wait for `ACCEPTED` or `FINALIZED` with `FINISHED_WITH_RETURN`. Record the transaction hash and numeric claim ID (expected first ID: `1`; verify using `get_claim`).
+**Verified CLI receipt (21 October 2026):** accepted and executed successfully.
+
+- Transaction: [`0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e`](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e)
+- Sender: `0x4e8F33FfDddd993fD8aC945897C54c3c1C73664a`
+- Contract: `0x59195008F33aa97AaF0bB73ECbd22187694AF559`
+- Status: **ACCEPTED**, consensus **AGREE** from **five validators**, execution **FINISHED_WITH_RETURN**.
+- First claim ID should be `1`; independently verify through live `get_claim("1")`.
+- Criterion: `Both sources explicitly confirm that milestone CS-DEMO-01 is APPROVED.`
+- Locked evidence: `evidence/demo/approved-a.txt` and `approved-b.txt` via GitHub Raw URLs.
 
 ### Resolve the new claim (signed write)
 
