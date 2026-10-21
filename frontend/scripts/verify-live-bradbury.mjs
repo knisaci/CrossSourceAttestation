@@ -52,13 +52,21 @@ console.log("PASS: deployed ABI exposes open_claim, resolve and get_claim");
 // Check the EXACT read helper used in the published browser frontend.
 const raw = await readClaimFromBradbury("1", ADDRESS, RPC);
 const val = JSON.parse(raw);
-if (val.error === "unknown claim") {
-  console.log("PASS: get_claim(1) returned unknown claim for new contract");
-} else if (val.id === "1") {
-  console.log("PASS: get_claim(1) returned:", val.status, val.verdict);
-} else {
-  throw new Error("Unexpected get_claim(1) result: " + raw);
+if (val.id !== "1")
+  throw new Error("Expected claim ID 1 after the accepted open_claim transaction: " + raw);
+if (val.standard !== "Both sources explicitly confirm that milestone CS-DEMO-01 is APPROVED.")
+  throw new Error("Unexpected claim standard: " + val.standard);
+for (const suffix of ["approved-a.txt", "approved-b.txt"]) {
+  const field = suffix.includes("-a.") ? "url_a" : "url_b";
+  if (val[field] !== "https://raw.githubusercontent.com/knisaci/CrossSourceAttestation/main/evidence/demo/" + suffix)
+    throw new Error("Unexpected evidence URL for " + field + ": " + val[field]);
 }
+if (!["OPEN","RESOLVED"].includes(val.status))
+  throw new Error("Unexpected claim state: " + JSON.stringify(val));
+if (val.status === "RESOLVED" && !["PASS","FAIL","INSUFFICIENT"].includes(val.verdict))
+  throw new Error("Claim resolved without valid verdict: " + JSON.stringify(val));
+console.log("PASS: on-chain signed claim 1 exists with exact locked standard and two fixture URLs");
+console.log("Claim 1 current status:", val.status, "verdict:", val.verdict || "(not resolved)");
 const oldSiteRead=await readLegacySiteClaim("1",ADDRESS,RPC);
 if(JSON.stringify(JSON.parse(oldSiteRead))!==JSON.stringify(val))
   throw new Error("Branch-Pages read-only viewer disagrees with bundled frontend");
