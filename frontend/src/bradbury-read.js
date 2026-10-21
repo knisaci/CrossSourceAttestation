@@ -72,9 +72,10 @@ export async function readClaimFromBradbury(claimId, address, rpc){
   if(json.error)throw Error("Bradbury read failed: "+json.error.message);
   if(json.result?.status?.code!==0)throw Error("GenVM read error: "+(json.result?.status?.message||"unknown"));
   const returned=json.result.data;
-  if(typeof returned!=="string"||!/^0x[\da-fA-F]+$/.test(returned))
-    throw Error("Unexpected GenLayer return data");
-  const value=decode(fromHex(returned,"bytes"));
+  const hex=typeof returned==="string" && !returned.startsWith("0x") ? "0x"+returned : returned;
+  if(typeof hex!=="string" || !/^0x[0-9a-fA-F]+$/.test(hex))
+    throw Error("Unexpected GenLayer return data: "+String(returned).slice(0,80));
+  const value=decode(fromHex(hex,"bytes"));
   if(typeof value!=="string")throw Error("get_claim returned a non-string value");
   return value;
 }
