@@ -2,10 +2,11 @@
 
 ## Reviewed changes (21 October 2026)
 
-The code in `contracts/CrossSourceAttestation.py` is the new evaluation
-implementation. The original Bradbury contract is immutable and has NOT
-yet been replaced. The public site remains in read-only mode until the
-corrected contract is deployed and wallet warnings are reviewed.
+The corrected implementation in `contracts/CrossSourceAttestation.py`
+was deployed to a new Bradbury contract on 21 October 2026. The previous
+contract remains immutable and unchanged. The public website remains
+read-only until a fresh open/resolve/read transaction path and wallet
+security review are complete.
 
 ### Evidence completeness
 
@@ -63,9 +64,30 @@ are audited in frontend CI. A GitHub Pages CSP meta tag cannot supply all
 server-only security headers, and the external wallet/extension phishing
 classification **has not been confirmed cleared**.
 
-### Deployment evidence still required
+### Deployment evidence: verified on Bradbury
 
-A new Bradbury deployment using the fixed source is required, with transaction
-hash, contract address, a genuine `open_claim -> resolve -> get_claim` run and
-a second adversarial real-network check. Do not cite the old PASS tx as proof
-that the new code is deployed. See `docs/BRADBURY-DEPLOYMENT.md`.
+- Contract: `0x59195008F33aa97AaF0bB73ECbd22187694AF559`
+- Deployment tx: `0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8`
+- GenLayer CLI receipt: **ACCEPTED / AGREE / FINISHED_WITH_RETURN**
+- Validator votes: **5 AGREE**
+- Source length: **8,536 bytes**
+- Local and remote source SHA-256: **`1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2`**
+- Live RPC verifies identical deployed source, correct `open_claim`,
+  `resolve` and `get_claim` ABI, and a successful read of fresh `get_claim("1")`
+  returning `unknown claim` (no claims had been created at check time).
+- Live verifier: `.github/workflows/verify-bradbury.yml`, using the same
+  browser-compatible read helper deployed by the frontend.
+- Deployment transaction explorer:
+  https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8
+
+### Remaining on-chain verification and website security
+
+A fresh **signed** `open_claim -> resolve -> get_claim` cycle is still
+required; it cannot be replaced with a simulated Direct Mode assertion or
+the successful deployment transaction alone. See exact CLI commands and
+public synthetic evidence URLs in `docs/BRADBURY-DEPLOYMENT.md`.
+
+The frontend is now pointed to the new Bradbury address for reads, with
+wallet actions still disabled. No claim has been made that the external
+wallet/extension phishing alert is cleared. Do not override such warnings
+or claim that source hardening eliminates every possible prompt-injection.

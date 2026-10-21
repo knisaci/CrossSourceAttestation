@@ -1,9 +1,12 @@
-> **October 2026 security note:** The public GitHub Pages desk is read-only
-> while a corrected evidence-evaluation contract is being verified and deployed.
-> The legacy Bradbury address and transaction examples below refer to the
-> original implementation; they do **not** prove the remediation.
-> See [steward verification](docs/STEWARD-REMEDIATION.md) and
-> [Bradbury deployment](docs/BRADBURY-DEPLOYMENT.md).
+> **21 October 2026:** Corrected CrossSource contract deployed on Bradbury
+> at `0x59195008F33aa97AaF0bB73ECbd22187694AF559`.
+> [Deployment tx](https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8)
+> was ACCEPTED with five validator AGREE votes; deployed source SHA-256 is
+> `1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2`.
+> Live source/ABI/read verified, but a signed open/resolve cycle and third-party
+> wallet reputation clearance are still pending. Website wallet writes remain
+> disabled. See [verification](docs/STEWARD-REMEDIATION.md) and
+> [exact claim commands](docs/BRADBURY-DEPLOYMENT.md).
 
 # CrossSource Desk
 

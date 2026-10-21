@@ -1,0 +1,4 @@
+CrossSource Desk synthetic test fixture B (not a real-world attestation).
+MILESTONE CS-DEMO-01 — APPROVAL GRANTED.
+This separate page explicitly confirms that milestone CS-DEMO-01 is APPROVED.
+For validation, quote: MILESTONE CS-DEMO-01 — APPROVAL GRANTED.
