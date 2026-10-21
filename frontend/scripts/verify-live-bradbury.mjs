@@ -61,12 +61,25 @@ for (const suffix of ["approved-a.txt", "approved-b.txt"]) {
   if (val[field] !== "https://raw.githubusercontent.com/knisaci/CrossSourceAttestation/main/evidence/demo/" + suffix)
     throw new Error("Unexpected evidence URL for " + field + ": " + val[field]);
 }
-if (!["OPEN","RESOLVED"].includes(val.status))
-  throw new Error("Unexpected claim state: " + JSON.stringify(val));
-if (val.status === "RESOLVED" && !["PASS","FAIL","INSUFFICIENT"].includes(val.verdict))
-  throw new Error("Claim resolved without valid verdict: " + JSON.stringify(val));
+if (val.status !== "RESOLVED" || val.verdict !== "PASS")
+  throw new Error("Claim 1 is not finalized RESOLVED/PASS: " + JSON.stringify(val));
+if (!val.reason?.includes("Both sources explicitly state"))
+  throw new Error("Expected decision reason missing: " + JSON.stringify(val));
+if (val.resolved_by?.toLowerCase() !== "0x4e8f33ffdddd993fd8ac945897c54c3c1c73664a")
+  throw new Error("Unexpected resolving account: " + val.resolved_by);
 console.log("PASS: on-chain signed claim 1 exists with exact locked standard and two fixture URLs");
 console.log("Claim 1 current status:", val.status, "verdict:", val.verdict || "(not resolved)");
+// Verify the signed write was executed, not merely marked accepted.
+const RESOLVE_TX="0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a";
+const receipt=await rpcCall("gen_getTransactionReceipt",[{txId:RESOLVE_TX}]);
+if(Number(receipt.status)!==5 || Number(receipt.txExecutionResult)!==1 ||
+   Number(receipt.result)!==1)
+  throw new Error("Resolve transaction not accepted/executed successfully: "+JSON.stringify(receipt));
+const round=receipt.roundData?.[0];
+if(!round || Number(round.votesRevealed)!==5 || !round.validatorResultHash?.length)
+  throw new Error("Missing validator consensus receipt data");
+console.log("PASS: resolve tx was ACCEPTED and FINISHED_WITH_RETURN",
+  RESOLVE_TX, "votes revealed", round.votesRevealed);
 const oldSiteRead=await readLegacySiteClaim("1",ADDRESS,RPC);
 if(JSON.stringify(JSON.parse(oldSiteRead))!==JSON.stringify(val))
   throw new Error("Branch-Pages read-only viewer disagrees with bundled frontend");
