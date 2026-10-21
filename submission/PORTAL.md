@@ -12,11 +12,11 @@
 
 Dual-source evidence gate on GenLayer: lock a standard and two live HTTPS pages, then reach consensus on PASS, FAIL or INSUFFICIENT.
 
-## Project description (≤1000 chars; 975 used)
+## Project description (≤1000 chars; update from text below)
 
 CrossSource Desk is a GenLayer Intelligent Contract and public read-only evidence viewer on Testnet Bradbury. A caller locks a standard and two distinct HTTPS pages; resolve() fetches both and judges them under validator consensus, comparing PASS, FAIL or INSUFFICIENT rather than narrative text. Pages up to 32,768 characters are evaluated in full; oversized pages yield explicit INSUFFICIENT. Web content is untrusted evidence, never judge instructions. PASS requires verbatim quotations from both sources.
 
-Live contract: 0x59195008F33aa97AaF0bB73ECbd22187694AF559. On-chain claim 1 completed open_claim → resolve → get_claim and stores RESOLVED/PASS (4 AGREE, 1 TIMEOUT). Source bytes match deployment; 8 Direct Mode and 8 additional regression tests pass.
+Live contract: 0x59195008F33aa97AaF0bB73ECbd22187694AF559. On-chain claim 1 completed open_claim → resolve → get_claim and stores RESOLVED/PASS (4 AGREE, 1 TIMEOUT). Source bytes match deployment; 7 Direct Mode and 7 additional regression tests pass.
 
 For safety, the public site offers wallet-free claim reads. Signed writes were demonstrated via the GenLayer CLI; website wallet signing remains paused while a reported extension warning is independently reviewed.
 
@@ -28,17 +28,17 @@ For safety, the public site offers wallet-free claim reads. Signed writes were d
 
 **03. Check accepted writes** — Inspect on-chain [open_claim](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e) and [resolve](https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a) receipts, both `FINISHED_WITH_RETURN`. Resolve achieved 4 AGREE and 1 TIMEOUT, with verdict PASS.
 
-**04. Reproduce the evaluation** — Review [Direct Mode and contract-path test runner](https://github.com/knisaci/CrossSourceAttestation/actions) and `docs/STEWARD-REMEDIATION.md`: 8+8 regressions, including post-12k contradiction and prompt injection. The actual adjudication test uses synthetic public evidence.
+**04. Reproduce the evaluation** — Review [Direct Mode and contract-path test runner](https://github.com/knisaci/CrossSourceAttestation/actions) and `docs/STEWARD-REMEDIATION.md`: 7+7 regressions, including post-12k contradiction and prompt injection. The actual adjudication test uses synthetic public evidence.
 
 **05. Signed replay** — See `docs/BRADBURY-DEPLOYMENT.md` for the installed GenLayer CLI and an explicit typed claim ID shim. A wallet is needed only on the operator's trusted local CLI; there is no public-site wallet signing while the warning remains unresolved.
 
-## Expected verification outcome (≤500 chars; 483 used)
+## Expected verification outcome (≤500 chars)
 
-Read claim 1 without a wallet at https://knisaci.github.io/CrossSourceAttestation/. Expect RESOLVED / PASS on 0x59195008F33aa97AaF0bB73ECbd22187694AF559. Accepted open: 0xdbe32671…df683e; accepted resolve: 0x441c3d80…53795a (FINISHED_WITH_RETURN; 4 AGREE, 1 TIMEOUT). Reproduce in README and docs/STEWARD-REMEDIATION.md: source SHA-256 1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2, 16 regression checks. Writes via CLI only while wallet warnings are investigated.
+Read claim 1 without a wallet at https://knisaci.github.io/CrossSourceAttestation/. Expect RESOLVED / PASS on 0x59195008F33aa97AaF0bB73ECbd22187694AF559. Accepted open: 0xdbe32671…df683e; accepted resolve: 0x441c3d80…53795a (FINISHED_WITH_RETURN; 4 AGREE, 1 TIMEOUT). Reproduce in README and docs/STEWARD-REMEDIATION.md: source SHA-256 1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2, 14 regression checks. Writes via CLI only while wallet warnings are investigated.
 
-## “What did you change?” (≤1000 chars; 813 used)
+## “What did you change?” (≤1000 chars)
 
-Fixed evidence truncation: pages ≤32,768 chars are fully evaluated; oversized pages yield explicit INSUFFICIENT. Isolated fetched content as untrusted JSON evidence, rejected direct judge-override instructions and unsupported PASS quotations. 8 GenLayer Direct Mode and 8 contract-path tests pass, including evidence after 12,000 chars and injection attempts. New Bradbury contract 0x59195008F33aa97AaF0bB73ECbd22187694AF559: byte-for-byte verified SHA-256 1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2. Claim 1 is RESOLVED/PASS after accepted open 0xdbe32671…df683e and resolve 0x441c3d80…53795a (4 AGREE, 1 TIMEOUT). Site now uses local bundles, restricted CSP, and wallet-free reads. Signing stays disabled pending external warning review. See GitHub docs/STEWARD-REMEDIATION.md and Actions.
+Fixed evidence truncation: pages ≤32,768 chars are fully evaluated; oversized pages yield explicit INSUFFICIENT. Isolated fetched content as untrusted JSON evidence, rejected direct judge-override instructions and unsupported PASS quotations. 7 GenLayer Direct Mode and 7 contract-path tests pass, including evidence after 12,000 chars and injection attempts. New Bradbury contract 0x59195008F33aa97AaF0bB73ECbd22187694AF559: byte-for-byte verified SHA-256 1d5134bc1499a9d18504fd72b6ec5061f5ae63a158a458ca5af595aecd4dd6f2. Claim 1 is RESOLVED/PASS after accepted open 0xdbe32671…df683e and resolve 0x441c3d80…53795a (4 AGREE, 1 TIMEOUT). Site now uses local bundles, restricted CSP, and wallet-free reads. Signing stays disabled pending external warning review. See GitHub docs/STEWARD-REMEDIATION.md and Actions.
 
 ## Links / unique supporting evidence
 
