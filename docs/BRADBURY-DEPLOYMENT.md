@@ -13,17 +13,17 @@
 
 Verification: GitHub Actions workflow **Verify Bradbury deployed source and read path** runs without any wallet or private key. Its read check is the exact same helper used by the read-only website.
 
-## Signed open_claim accepted — next: resolve claim 1
+## Signed end-to-end demonstration — RESOLVED / PASS
 
 Use the same installed GenLayer CLI and funded Bradbury testnet account already used for deployment. **No installation is required.** Only copy the commands below into the Terminal, not labels or earlier terminal output.
 
-### Read current state (no transaction)
+### Read durable claim state (no transaction)
 
 ```sh
-genlayer call 0x59195008F33aa97AaF0bB73ECbd22187694AF559 get_claim --rpc https://rpc-bradbury.genlayer.com --args "1"
+node --import ./scripts/typed-cli-string-loader.mjs "$(command -v genlayer)" call 0x59195008F33aa97AaF0bB73ECbd22187694AF559 get_claim --rpc https://rpc-bradbury.genlayer.com --args str#1
 ```
 
-Until a claim exists, this should say `unknown claim`.
+For claim 1, expect `RESOLVED` and `PASS` after the accepted resolve receipt.
 
 ### Signed open_claim transaction — completed
 
@@ -41,13 +41,36 @@ genlayer write 0x59195008F33aa97AaF0bB73ECbd22187694AF559 open_claim --rpc https
 - Criterion: `Both sources explicitly confirm that milestone CS-DEMO-01 is APPROVED.`
 - Locked evidence: `evidence/demo/approved-a.txt` and `approved-b.txt` via GitHub Raw URLs.
 
-### Resolve the new claim (signed write)
+### Successful resolve (signed write — completed)
+
+The official GenLayer CLI coerced a bare digit argument into an integer. A first
+attempt using `--args "1"` failed with `FINISHED_WITH_ERROR` and four other
+validators agreeing on the same runtime error. The underlying exception was a
+TreeMap string-versus-integer comparison, **not** a verdict disagreement.
+The failed transaction is [`0x9ecee457…02d62`](https://explorer-bradbury.genlayer.com/tx/0x9ecee457ddfa70a20312c2bd49b035203ddf66a381889699e69f94de92502d62).
+See [transaction forensic report](BRADBURY-RESOLVE-INCIDENT.md).
+
+The recovery used a Node 24 in-memory type adapter, which sends `str#1`
+as the literal string claim ID `"1"`. The read-only command first verified
+that claim 1 was `OPEN`.
 
 ```sh
-genlayer write 0x59195008F33aa97AaF0bB73ECbd22187694AF559 resolve --rpc https://rpc-bradbury.genlayer.com --args "1"
+node --import ./scripts/typed-cli-string-loader.mjs "$(command -v genlayer)" write 0x59195008F33aa97AaF0bB73ECbd22187694AF559 resolve --rpc https://rpc-bradbury.genlayer.com --args str#1
 ```
 
-Check `get_claim("1")` again with the read command above and save the resolution transaction hash, verdict, reason, and accepted validator result. A `PASS` is expected from two explicit approval fixtures, but cannot be asserted in advance of consensus.
+**Actual receipt (21 October 2026):**
+
+- **Resolve tx:** [`0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a`](https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a)
+- **Consensus status:** `ACCEPTED`; `resultName: AGREE`.
+- **Execution:** `FINISHED_WITH_RETURN` (execution result `1`).
+- **Validator votes:** `AGREE, AGREE, AGREE, TIMEOUT, AGREE` — 4 AGREE, 1 TIMEOUT.
+- **Consensus output:** verdict `PASS`; reason: `Both sources explicitly state that milestone CS-DEMO-01 is approved.`.
+- **Expected durable state:** `get_claim("1")` reports `status=RESOLVED`, `verdict=PASS`.
+
+The CI live-RPC verifier checks that durable state, contract bytes and both
+static-site read helpers, and independently checks the resolve transaction's
+execution status. The test fixtures are synthetic; this proves the GenLayer
+decision pipeline, not any unrelated real-world milestone.
 
 ### Optional targeted adversarial on-chain demonstrations
 
