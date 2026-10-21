@@ -149,6 +149,10 @@ class Contract(gl.Contract):
 
     @gl.public.write
     def resolve(self, claim_id: str) -> str:
+        # GenLayer CLI --args parses bare numeric IDs as integers. TreeMap
+        # contains string keys ("1"), so normalise at the public entry point
+        # before any indexed read. Required by real Bradbury execution.
+        claim_id = str(claim_id)
         if claim_id not in self.claims:
             raise Exception("unknown claim")
         claim = self.claims[claim_id]
@@ -196,6 +200,8 @@ class Contract(gl.Contract):
 
     @gl.public.view
     def get_claim(self, claim_id: str) -> str:
+        # Public read CLI also coerces "1" into a numeric calldata argument.
+        claim_id = str(claim_id)
         if claim_id not in self.claims:
             return json.dumps({"error": "unknown claim"})
         c = self.claims[claim_id]
