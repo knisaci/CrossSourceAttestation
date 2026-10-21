@@ -80,10 +80,19 @@ classification **has not been confirmed cleared**.
 - Deployment transaction explorer:
   https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8
 
+### First signed on-chain claim
+
+- `open_claim` transaction: [`0xdbe32671…df683e`](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e)
+- Receipt: `ACCEPTED / AGREE / FINISHED_WITH_RETURN`, all five votes AGREE.
+- Expected claim ID: `1`. Locked standard and evidence URLs are recorded in
+  `docs/BRADBURY-DEPLOYMENT.md`.
+- The signed `resolve` transaction and resulting adjudicated verdict are
+  **not yet documented**. Do not state that live adjudication is complete.
+
 ### Remaining on-chain verification and website security
 
-A fresh **signed** `open_claim -> resolve -> get_claim` cycle is still
-required; it cannot be replaced with a simulated Direct Mode assertion or
+The fresh `open_claim` transaction has been **signed, ACCEPTED, and executed**.
+Its transaction ID is `0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e`, with five validator `AGREE` votes. A signed `resolve -> get_claim` cycle remains required; it cannot be replaced with a simulated Direct Mode assertion or
 the successful deployment transaction alone. See exact CLI commands and
 public synthetic evidence URLs in `docs/BRADBURY-DEPLOYMENT.md`.
 
