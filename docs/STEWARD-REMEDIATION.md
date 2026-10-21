@@ -38,11 +38,11 @@ sha256sum contracts/CrossSourceAttestation.py
 ```
 
 The repository CI has two independent jobs:
-- **Direct Mode:** eight tests executing actual GenLayer contract methods
+- **Direct Mode:** seven tests executing actual GenLayer contract methods
   with mocked web and LLM calls, including leader/validator disagreement.
   A test-only SDK compatibility shim adapts the older pinned on-chain
   GenVM layout to the current GenLayer testing suite.
-- **Contract-path tests:** eight tests executing the same actual Python
+- **Contract-path tests:** seven tests executing the same actual Python
   contract under an isolated mock backend, plus syntax checks.
 
 Coverage: normal quoted PASS; a post-12k material contradiction resulting
@@ -90,7 +90,7 @@ classification **has not been confirmed cleared**.
 - **Read-back validation:** CI verifies the accepted durable `RESOLVED / PASS` state, caller's address, source URLs, byte-for-byte deployed code, and the exact successful resolve receipt. Both Pages read-only clients agree.
 
 This is a real GenLayer consensus execution using *synthetic test evidence*.
-The 16 additional tests (8 Direct Mode, 8 contract-path) cover evidence after
+The 14 additional tests (7 Direct Mode, 7 contract-path) cover evidence after
 the old 12,000-character limit, oversized pages and embedded prompt-injection
 attempts using mocked website/LLM inputs. Those adversarial cases have not
 been demonstrated with separately signed real-network transactions.
