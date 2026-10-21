@@ -3,8 +3,6 @@
 // Performs a real node-backed read, but never constructs or signs a transaction.
 import fs from "node:fs";
 import crypto from "node:crypto";
-import { createClient } from "genlayer-js";
-import { testnetBradbury } from "genlayer-js/chains";
 
 const ADDRESS = "0x59195008F33aa97AaF0bB73ECbd22187694AF559";
 const RPC = "https://rpc-bradbury.genlayer.com";
@@ -20,7 +18,7 @@ async function rpcCall(method, params) {
   if (!response.ok) throw new Error(`RPC HTTP ${response.status} for ${method}`);
   const json = await response.json();
   if (json.error) throw new Error(`${method}: ${JSON.stringify(json.error)}`);
-  if (typeof json.result !== "string" || !json.result)
+  if (json.result === undefined || json.result === null)
     throw new Error(`${method}: unexpected or empty result`);
   return json.result;
 }
@@ -42,24 +40,97 @@ if (!onchain.equals(original)) {
 }
 console.log("PASS: Bradbury deployed contract source matches repository byte-for-byte");
 
-const client = createClient({chain: testnetBradbury, endpoint: RPC});
-const schema = await client.getContractSchema({address: ADDRESS});
-const schemaText = JSON.stringify(schema);
+const schema = await rpcCall("gen_getContractSchema", [{code: encoded}]);
 for (const method of ["open_claim","resolve","get_claim"]) {
-  if (!schemaText.includes(method))
+  if (!schema.methods?.[method])
     throw new Error(`Contract ABI does not expose ${method}`);
 }
 console.log("PASS: deployed ABI exposes open_claim, resolve and get_claim");
 
-const raw = await client.readContract({address: ADDRESS, functionName:"get_claim", args:["1"]});
-const val = typeof raw === "string" ? JSON.parse(raw) : raw;
-if (!val || typeof val !== "object")
-  throw new Error(`get_claim(1) returned unexpected data: ${JSON.stringify(raw)}`);
-if (val.error === "unknown claim") {
-  console.log("PASS: new contract responds to get_claim(1); no claim 1 yet");
-} else if (val.id === "1") {
-  console.log("PASS: new contract responds to get_claim(1):", val.status, val.verdict);
-} else {
-  throw new Error(`get_claim(1) unexpected response: ${JSON.stringify(val)}`);
+// Exercise an account-free, read-only call using documented GenLayer
+// calldata encoding. No private key and no transaction submission.
+function uleb(num) {
+  let n = BigInt(num);
+  const out = [];
+  do {
+    let b = Number(n & 127n);
+    n >>= 7n;
+    if (n !== 0n) b |= 128;
+    out.push(b);
+  } while(n);
+  return out;
+}
+function encodeValue(v) {
+  if (typeof v === "string") {
+    const bytes = Buffer.from(v,"utf8");
+    return Buffer.concat([Buffer.from(uleb((BigInt(bytes.length)<<3n)|4n)),bytes]);
+  }
+  if(Array.isArray(v)){
+    return Buffer.concat([Buffer.from(uleb((BigInt(v.length)<<3n)|5n)),...v.map(encodeValue)]);
+  }
+  if(v && typeof v === "object"){
+    const entries = Object.entries(v).sort(([a],[b])=>a.localeCompare(b,"en"));
+    const parts = [Buffer.from(uleb((BigInt(entries.length)<<3n)|6n))];
+    for (const [key,value] of entries){
+      const bytes=Buffer.from(key,"utf8");
+      parts.push(Buffer.from(uleb(bytes.length)),bytes,encodeValue(value));
+    }
+    return Buffer.concat(parts);
+  }
+  throw new Error("unsupported read calldata type");
+}
+function decodeValue(bytes) {
+  let pos=0;
+  function getNum(){
+    let shift=0n, out=0n;
+    for (;;) {
+      if(pos>=bytes.length)throw new Error("truncated return calldata");
+      const b=BigInt(bytes[pos++]);
+      out |= (b&127n)<<shift;
+      if(b<128n)return out;
+      shift+=7n;
+    }
+  }
+  function parse(){
+    const n=getNum();
+    const kind=Number(n&7n), size=Number(n>>3n);
+    if(kind===4){
+      const ret=bytes.subarray(pos,pos+size).toString("utf8");pos+=size;return ret;
+    }
+    if(kind===1)return n>>3n;
+    if(kind===0){if(n===0n)return null;if(n===8n)return false;if(n===16n)return true;}
+    if(kind===5){const arr=[];for(let k=0;k<size;k++)arr.push(parse());return arr;}
+    if(kind===6){
+      const obj={};for(let k=0;k<size;k++){
+        const length=Number(getNum());const key=bytes.subarray(pos,pos+length).toString("utf8");pos+=length;
+        obj[key]=parse();
+      }return obj;
+    }
+    throw new Error("unhandled calldata kind "+kind);
+  }
+  return parse();
+}
+const call = await rpcCall("gen_call", [{
+  from:"0x4e8F33FfDddd993fD8aC945897C54c3c1C73664a",
+  to:ADDRESS,
+  type:"read",
+  value:"0x0",
+  status:"accepted",
+  data:"0x"+encodeValue({method:"get_claim",args:["1"]}).toString("hex"),
+}]);
+if (call.status?.code !== 0) {
+  throw new Error("get_claim(1) failed: "+JSON.stringify(call.status));
+}
+const returned = Buffer.from(String(call.data||"").replace(/^0x/,""),"hex");
+if (!returned.length) throw new Error("Read call returned empty data");
+const decoded = decodeValue(returned);
+const val = typeof decoded==="string" ? JSON.parse(decoded) : decoded;
+if(!val || typeof val!=="object")throw new Error("unexpected claim result: "+JSON.stringify(decoded));
+if(val.error==="unknown claim") {
+ console.log("PASS: get_claim(1) returned unknown claim for new contract");
+}else if(val.id==="1") {
+ console.log("PASS: get_claim(1) returned:",val.status,val.verdict);
+}else {
+ throw new Error("Unexpected get_claim(1) result: "+JSON.stringify(val));
 }
 console.log("READ_ONLY_BRADBURY_VERIFICATION_SUCCESS");
