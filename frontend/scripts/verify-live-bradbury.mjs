@@ -3,6 +3,7 @@
 // Performs a real node-backed read, but never constructs or signs a transaction.
 import fs from "node:fs";
 import crypto from "node:crypto";
+import { toRlp, toHex } from "viem";
 
 const ADDRESS = "0x59195008F33aa97AaF0bB73ECbd22187694AF559";
 const RPC = "https://rpc-bradbury.genlayer.com";
@@ -116,7 +117,7 @@ const call = await rpcCall("gen_call", [{
   type:"read",
   value:"0x0",
   status:"accepted",
-  data:"0x"+encodeValue({method:"get_claim",args:["1"]}).toString("hex"),
+  data:toRlp([toHex(encodeValue({method:"get_claim",args:["1"]})), toHex(false)]),
 }]);
 if (call.status?.code !== 0) {
   throw new Error("get_claim(1) failed: "+JSON.stringify(call.status));
