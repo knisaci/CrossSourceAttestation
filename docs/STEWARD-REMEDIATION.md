@@ -5,8 +5,7 @@
 The corrected implementation in `contracts/CrossSourceAttestation.py`
 was deployed to a new Bradbury contract on 21 October 2026. The previous
 contract remains immutable and unchanged. The public website remains
-read-only until a fresh open/resolve/read transaction path and wallet
-security review are complete.
+read-only until the external wallet/extension reputation warning is independently cleared.
 
 ### Evidence completeness
 
@@ -39,11 +38,11 @@ sha256sum contracts/CrossSourceAttestation.py
 ```
 
 The repository CI has two independent jobs:
-- **Direct Mode:** seven tests executing actual GenLayer contract methods
+- **Direct Mode:** eight tests executing actual GenLayer contract methods
   with mocked web and LLM calls, including leader/validator disagreement.
   A test-only SDK compatibility shim adapts the older pinned on-chain
   GenVM layout to the current GenLayer testing suite.
-- **Contract-path tests:** seven tests executing the same actual Python
+- **Contract-path tests:** eight tests executing the same actual Python
   contract under an isolated mock backend, plus syntax checks.
 
 Coverage: normal quoted PASS; a post-12k material contradiction resulting
@@ -80,21 +79,23 @@ classification **has not been confirmed cleared**.
 - Deployment transaction explorer:
   https://explorer-bradbury.genlayer.com/tx/0x8827fec61f1d475ad9f21b8c337b7a6b672a35237d4587ef6b815fbfcf0922f8
 
-### First signed on-chain claim
+### Signed end-to-end verification — RESOLVED / PASS
 
-- `open_claim` transaction: [`0xdbe32671…df683e`](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e)
-- Receipt: `ACCEPTED / AGREE / FINISHED_WITH_RETURN`, all five votes AGREE.
-- Expected claim ID: `1`. Locked standard and evidence URLs are recorded in
-  `docs/BRADBURY-DEPLOYMENT.md`.
-- The signed `resolve` transaction and resulting adjudicated verdict are
-  **not yet documented**. Do not state that live adjudication is complete.
+- **Contract:** `0x59195008F33aa97AaF0bB73ECbd22187694AF559`.
+- **Open claim tx:** [`0xdbe32671…df683e`](https://explorer-bradbury.genlayer.com/tx/0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e) — `ACCEPTED / AGREE / FINISHED_WITH_RETURN` with 5 AGREE votes.
+- **First resolve attempt:** [`0x9ecee457…02d62`](https://explorer-bradbury.genlayer.com/tx/0x9ecee457ddfa70a20312c2bd49b035203ddf66a381889699e69f94de92502d62) — **FINISHED_WITH_ERROR**. The CLI coerced claim ID to integer, incompatible with TreeMap string keys. No web/LLM call occurred. Diagnosed from actual `gen_dbg_traceTransaction`.
+- **Successful resolve tx:** [`0x441c3d80…53795a`](https://explorer-bradbury.genlayer.com/tx/0x441c3d80d074508d5a01f23aa43c8a695e47a11915f1dd985d80d6990653795a) — `ACCEPTED / AGREE / FINISHED_WITH_RETURN`, 4 AGREE votes and 1 TIMEOUT.
+- **Real consensus verdict:** **PASS**. Reason: `Both sources explicitly state that milestone CS-DEMO-01 is approved.`.
+- **Claim ID:** `1`; locked standard and both evidence URLs documented in [Bradbury deployment proof](BRADBURY-DEPLOYMENT.md).
+- **Read-back validation:** CI verifies the accepted durable `RESOLVED / PASS` state, caller's address, source URLs, byte-for-byte deployed code, and the exact successful resolve receipt. Both Pages read-only clients agree.
 
-### Remaining on-chain verification and website security
+This is a real GenLayer consensus execution using *synthetic test evidence*.
+The 16 additional tests (8 Direct Mode, 8 contract-path) cover evidence after
+the old 12,000-character limit, oversized pages and embedded prompt-injection
+attempts using mocked website/LLM inputs. Those adversarial cases have not
+been demonstrated with separately signed real-network transactions.
 
-The fresh `open_claim` transaction has been **signed, ACCEPTED, and executed**.
-Its transaction ID is `0xdbe326718f9c67980bb9949912cc61fc9f8ea7b1b8b0bdee474336dad2df683e`, with five validator `AGREE` votes. A signed `resolve -> get_claim` cycle remains required; it cannot be replaced with a simulated Direct Mode assertion or
-the successful deployment transaction alone. See exact CLI commands and
-public synthetic evidence URLs in `docs/BRADBURY-DEPLOYMENT.md`.
+### Remaining website-security issue
 
 The frontend is now pointed to the new Bradbury address for reads, with
 wallet actions still disabled. No claim has been made that the external
