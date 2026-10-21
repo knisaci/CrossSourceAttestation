@@ -1,0 +1,20 @@
+name: Validate non-invasive GenLayer CLI typed-ID shim
+on:
+  push:
+    branches: ["fix/live-resolve-disagree-20261021", "fix/cli-string-id-shim-20261021"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  typed-argument:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: mkdir -p .cli-smoke && npm install --prefix .cli-smoke genlayer --no-audit --no-fund --ignore-scripts
+      - run: node --import ./scripts/typed-cli-string-loader.mjs .cli-smoke/node_modules/genlayer/dist/index.js write 0x59195008F33aa97AaF0bB73ECbd22187694AF559 resolve --args str#1
+        env:
+          CS_TEST_TYPED_ID: "1"
