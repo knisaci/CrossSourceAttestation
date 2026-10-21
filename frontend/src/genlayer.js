@@ -1,11 +1,12 @@
 import { createClient } from "genlayer-js";
+import { readClaimFromBradbury } from "./bradbury-read.js";
 import { testnetBradbury } from "genlayer-js/chains";
 import { TransactionStatus } from "genlayer-js/types";
 
 // Approved deployment required before enabling writes. Never reuse the
 // previously deployed contract for security-remediated claims.
 export const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS ||
-  "0x8bF0baAC9432a9c00183de43825E39F58b3E4a8c";
+  "0x59195008F33aa97AaF0bB73ECbd22187694AF559";
 export const WRITES_ENABLED =
   import.meta.env.VITE_WRITES_ENABLED === "true" &&
   Boolean(import.meta.env.VITE_CONTRACT_ADDRESS) &&
@@ -141,26 +142,12 @@ export function parseClaim(raw) {
 
 export async function getClaim(id) {
   const claimId = String(id || "").trim();
-  if (!claimId) throw new Error("Enter a claim id first. Use 1 for the accepted PASS example.");
-  const client = await readyRead();
-  const request = {
-    address: CONTRACT_ADDRESS,
-    functionName: "get_claim",
-    args: [claimId],
-    kwargs: { claim_id: claimId },
-  };
+  if (!/^\d+$/.test(claimId))
+    throw new Error("Enter a numeric claim id to read.");
   try {
-    return parseClaim(await client.readContract(request));
-  } catch (first) {
-    try {
-      return parseClaim(await client.readContract({
-        address: CONTRACT_ADDRESS,
-        functionName: "get_claim",
-        args: [claimId],
-      }));
-    } catch (_) {
-      throw new Error(friendlyError(first));
-    }
+    return parseClaim(await readClaimFromBradbury(claimId, CONTRACT_ADDRESS, RPC_URL));
+  } catch(err) {
+    throw new Error(friendlyError(err));
   }
 }
 
