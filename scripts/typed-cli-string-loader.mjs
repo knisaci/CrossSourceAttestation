@@ -18,7 +18,7 @@ registerHooks({
     const match=source.match(header);
     if(!match)throw Error("CLI parseArg function signature changed; no command executed.");
     const [,value,previous]=match;
-    const inserted=match[0] + "\n  if (typeof "+value+" === 'string' && "+value+".startsWith('str#')) return [..."+previous+", "+value+".slice(4)];\n";
+    const inserted=match[0] + "\n  if (typeof "+value+" === 'string' && "+value+".startsWith('str#')) { const typed = "+value+".slice(4); if (process.env.CS_TEST_TYPED_ID === '1') { if (typed !== '1') throw Error('wrong typed claim'); console.log('CONFIRMED_STRING_ARG='+JSON.stringify(typed)); process.exit(0); } return [..."+previous+", typed]; }\n";
     source=source.replace(match[0],inserted);
     if(!source.includes("startsWith('str#')"))throw Error("CLI type override not inserted");
     return {...loaded,source};
