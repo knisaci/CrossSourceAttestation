@@ -120,3 +120,21 @@ def test_validator_disagreement(harness):
     assert result=="PASS"
     gl.nondet.judge=lambda *_: {"verdict":"FAIL","reason":"Independent disagreement"}
     assert gl.vm.validator(gl.vm.Return({"verdict":"PASS"})) is False
+
+def test_contract_methods_handle_cli_numeric_claim_id(harness):
+    """Legacy CLI --args parses a digit-only string into an integer."""
+    run, gl, mod = harness
+    a, b = "approved safety evidence alpha", "approved safety evidence beta"
+    gl.nondet.judge = lambda p, f: {
+        "verdict": "PASS", "reason": "both approved",
+        "evidence_a": a, "evidence_b": b,
+    }
+    standard = "Both pages must provide approved safety evidence."
+    url_a = "https://one.example/evidence"
+    url_b = "https://two.example/evidence"
+    gl.nondet.web.pages = {url_a: a, url_b: b}
+    contract = mod.Contract()
+    i = contract.open_claim(standard, url_a, url_b)
+    assert json.loads(contract.get_claim(1))["status"] == "OPEN"
+    assert contract.resolve(1) == "PASS"
+    assert json.loads(contract.get_claim(1))["status"] == "RESOLVED"
