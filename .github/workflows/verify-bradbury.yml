@@ -1,0 +1,19 @@
+name: Verify Bradbury deployed source and read path
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-bradbury:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --prefix frontend --no-audit --no-fund
+      - run: node frontend/scripts/verify-live-bradbury.mjs
