@@ -1,7 +1,7 @@
 name: Validate non-invasive GenLayer CLI typed-ID shim
 on:
   push:
-    branches: ["fix/live-resolve-disagree-20261021"]
+    branches: ["fix/live-resolve-disagree-20261021", "fix/cli-string-id-shim-20261021"]
   workflow_dispatch:
 permissions:
   contents: read
