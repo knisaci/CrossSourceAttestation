@@ -33,10 +33,10 @@ const DEMO = {
 
 const state = {
   account: "",
-  stage: "Read-only evidence viewer · wallet actions paused while contract security is verified",
+  stage: "Read-only verification · wallet writes disabled until security clearance and live claim validation",
   hash: "",
   error: "",
-  lastClaimId: localStorage.getItem("cs_last_claim") || "1",
+  lastClaimId: localStorage.getItem("cs_v2_last_claim") || "",
   claim: null,
   busy: false,
 };
@@ -242,7 +242,7 @@ async function openClaim() {
     let id = String(result.returned || "").replace(/[^0-9]/g, "");
     if (id) {
       state.lastClaimId = id;
-      localStorage.setItem("cs_last_claim", id);
+      localStorage.setItem("cs_v2_last_claim", id);
       state.claim = await getClaim(id);
       state.stage = result.ok ? ("Claim " + id + " opened") : ("Claim " + id + " submitted but execution looked unsuccessful");
     } else {
@@ -257,7 +257,7 @@ async function loadClaim() {
   const id = document.getElementById("claim_id").value.trim();
   state.error = "";
   state.lastClaimId = id;
-  localStorage.setItem("cs_last_claim", id);
+  localStorage.setItem("cs_v2_last_claim", id);
   try {
     state.claim = await getClaim(id);
     state.stage = state.claim.error ? "Read returned an error" : ("Loaded claim " + id);
@@ -280,7 +280,7 @@ async function resolveClaim() {
     });
     state.hash = result.hash;
     state.lastClaimId = id;
-    localStorage.setItem("cs_last_claim", id);
+    localStorage.setItem("cs_v2_last_claim", id);
     try { state.claim = await getClaim(id); } catch (_) {}
     state.stage = result.ok
       ? ("Resolved claim " + id + " · " + ((state.claim && state.claim.verdict) || "see state"))
